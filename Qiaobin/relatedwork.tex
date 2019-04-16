@@ -1,0 +1,59 @@
+\section{Related Work}
+\label{sec:relatedwork}
+
+%Given a set of $n$ elements, given a array of $m$ bits, 
+Given a set of $n$ elements as well as a array of $m$ bits, using $k$ hash functions to read $k$ bits of the array, Bloom Filter can judge whether an element belongs to this set. That an element not belonging to the set is judged to be is called false positive. Bloom Filter shows  how to achieve the minimal false positive probability in theory. 
+
+The membership query speed is fast, thus BFs are applied to various fields.  Specifically, after 2003, Bloom Filters are widely applied in computer network filed \cite{sig03PBF, songsig05, BFDanLi, yuConext09, BF_TC}. A comprehensive survey of Bloom Filter is provided in \cite{BFSurvey9C}.
+
+The main shortcoming of Bloom Filters is the false positive, which can hardly be improved because it is proven to be optimal in theory. Therefore, although various papers proposed to improve the standard Bloom Filter (SBF), few of them are really effective. Here we only survey the significant improvement of Bloom Filters below. 
+
+The improvement of Standard Bloom Filter (SBF) can be divided into four kinds: counter-oriented filters, false positive-oriented filters, overhead-oriented filters, and other filters.
+
+\subsection{Counter-oriented Filters}
+Because there is only one bit for each hash position, thus SBF cannot support deletion, while it supports insertion naturally. 
+To address this issue, Counting Bloom Filter (CBF) which uses a counter (usually 4 bits) to replace a bit in one hash position is proposed in \cite{webcaching}. The cost of supporting deletion is several times of space requirement and false negative. When a counter in a CBF ever overflows, the standard CBF just let it stay at its maximum value. After many deletions, the counter may decrease to 0 while it shouldn't be, then false negative might happen. Fortunately, the probability of false negative is very small \cite{falsenegative}.
+%When a counter in a CBF overflows, after many deletion, when this counter decreases to 0, false negative might happen. Fortunately, the probability of false negative is very small \cite{falsenegative}.%
+
+Based on CBF, Spectral BF \cite{spectralBF} can not only supports membership query, but also tells that the probability that one element appears in the set.
+
+\subsection{False Positive-oriented Filters}
+To make a trade-off between false positive and false negative, retouched Bloom filters are proposed in \cite{retouchedBF}. Its application range is confined in those which allow both small false positive and false negative. 
+
+The false positive of Bloom Filter is optimal in theory, thus it cannot be compressed. Actually, it is optimal for the three parameters: size ($m$), the number of hash functions ($k$), the number of elements ($n$). When other parameters are introduced, the optimal formula changes. 
+Based on this observation, besides $n$, $k$, $m$ (the size before compression), when the size after compression $z$ is introduced, the optimal false positive changes. Compressed Bloom filter is proposed in the situation where Bloom filter is passed as a message \cite{compressedBF}. 
+
+\subsection{Overhead-oriented Filters}
+Since it is hard to optimize the false positive, some work focus on the improvement of the overhead of BF queries. 
+In many applications, Bloom Filter is small enough to be stored in on-chip memory (such as CPU and GPU cache). When BFs are stored in on-chip memory, the overhead hash computation cannot be ignored compared with memory access, because one memory access of on-chip memory only needs several clock cycles. To reduce the overhead of hashing, Kirsch \etal propose to use two hash functions to simulate $k$ hash functions at the cost of the increase of false positive probability \cite{lessHashBF}.
+
+
+Qiao \etal propose to confine the $k$ hash positions in one or several words \cite{onemem}. In this way, the number of memory accesses can be significantly reduced. Similar with Kirsch's solution, the cost is the increase of false positive probability. Both of these two papers claimed that the increased false positive probability is small.
+
+\subsection{Other Filters}
+
+Besides membership query, some add additional functions to SBF, such as Bloomier filter \cite{Bloomier}, and Dynamic bloom filters \cite{DynamicBF}. 
+Some focus on the choice of hash functions, such as Bloom Filters using universal hashing \cite{universalHash}, and Bloom Filters with practical hashing \cite{partitionHashBF}.
+Some focus on the problem of multiple sets and BFs, such as 
+d-Left filters \cite{dleft}, DLB-BF \cite{songV6}, Multi-class
+Bloom Filter \cite{BFDanLi},  Bloom Filter for set query \cite{setqueryBF}, Combinatorial Bloom Filters \cite{combineBF}, and BloomCast \cite{BloomCast}.
+
+
+
+
+%Bloom Filter is applied into many fields, and its applications can be divided into the following four categories:
+
+%1) cache judgment.
+%2) IP lookups.
+%3) MAC address lookup.
+%4) packet classification.
+%
+%There is also another classification method:
+%1) single Bloom Filter application.
+%2) multiple Bloom Filters application.
+
+%talk about the BFs in which classification method????
+
+
+
+%Although so many variants of Bloom Filters are proposed, the standard BF continues to be the most popular in a great number of applications owing to its simplicity and outstanding performance. 

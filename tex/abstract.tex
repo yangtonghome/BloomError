@@ -1,0 +1,7 @@
+\begin{abstract}
+The Bloom Filter is a memory-efficient data structure that has already been applied to many fields. A Bloom Filter tells whether an element belongs to a set or not. That an element that is not an element of the set might be judged to be is called a false positive. The formula of the probability of false positive is deduced in the original paper in 1970~\cite{BF1970}, and appears in many papers. Two papers in 2008 and 2010 argue that the formula is wrong and give new formulas. 
+A correct formula is indispensable for the various applications of Bloom Filters.
+
+To settle this controversy, we deduce the false positive probability using \textit{entropy theory}, and make two conclusions: 1) the error of the original formula is so small that it can be ignored when the size of Bloom Filters is large; 2) the formula of optimal value of the number of hash functions is deduced, and is close to the formula in 1970, especially when $m$ is large.
+%本文讨论关于BF的假阳性计算的争议，并且针对BF本身存在的K值较大和无法动态增长的问题，提出了两种解决方案
+\end{abstract}

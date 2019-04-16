@@ -1,0 +1,71 @@
+\section{Introduction}
+
+\subsection{Background}
+The Bloom Filter (BF) proposed in 1970 is a compact data structure, which is used to check whether an element belongs to a set or not \cite{BF1970}. Owing to its small memory requirement and fast membership query, BFs are widely applied in various fields, such as Database \cite{DatabaseFile,DatabaseText}, web cache sharing \cite{webcaching}, cryptography \cite{encrypt} \textit{etc}. After 2003, BFs are applied in the computer network field, the typical papers are \cite{sig03PBF, yuConext09, BFDanLi, BF_TC, HASH-100G}.
+
+The data structure of BFs is a bit array with length of $m$ which are initially all $0s$. 
+Given a set $S$ with $n$ elements, for any element $x\in S$, $k$ hash values are computed using $k$ independent hash functions: $h_1(x), h_2(x),..., h_k(x)$, then the corresponding $k$ positions of the bit array are all set to $1s$. When querying an element $y$, $k$ hash values are computed: $h_1(y) \% m, h_2(y) \% m,..., h_k(y) \% m$: if the corresponding bits of the bit array are all $1s$, then the element $y$ is judged to be belonging to set $S$; Otherwise, $y$ is definitely not a element of the Set $S$. That one element not belonging to the set is judged to be is called a \textit{false positive}. BFs with different probabilities of false positive are used in different applications, so it is vital to deduce an accurate formula of false positive of BFs. 
+
+\subsection{Problem statement}
+In practice, one indispensable work is to choose appropriate parameters. Specifically, two typical applications are as follows:
+
+1) Problem I: Given a set with $n$ elements, the size of available memory $m$ is fixed. To minimize the false positive, how many hash functions do we need? In other words, the optimal value of $k$ needs to be determined. 
+
+2) Problem II: In many applications, the size of BF is large, then what is the approximate formula of $f$ when m is large, if the accurate formula is too complicated to compute?
+%. what is the accurate probability of false positive $f$?  
+
+%2) Problem II: Given a set with $n$ elements, to achieve the expected false positive $f$, what's the minimum value of $m$, and how to choose the value of $k$?
+
+\subsection{limitation of prior arts}
+%一段话，BF给出的caculation 是错误，bose也错了，第二个论文给出的是对的，没有办法设定参数，无法解决上述两个问题。只是优缺点，不详细。
+Bloom \etal deduced formulas (Bloom's formula) of false positive probability to address the above two problems in 1970. Unfortunately, as claimed by Prosenjit Bose \etal, the deduction of Bloom's formulas is incorrect, and a new formula (Bose's formula) is deduced and presented~\cite{bose2008false}. 
+Unfortunately again, Bose's formula has a minor flaw, which was fixed by Ken Christensen \etal~\cite{ken2010false} (Christensen's formula). Still Unfortunately, Christensen's formula is to be practical.
+%so complicated that the optimal value of $k$ cannot be determined. 
+
+
+A step in the deduction of Bloom's formula is wrong, thus Bloom's formula cannot solve problem I and II.
+Bose's formula has a minor flaw, thus also cannot solve problem I and II. 
+Christensen's formula is so complicated that the optimal value of $k$ cannot be computed, thus cannot solve Problem I. 
+Christensen's formula can only compute the false positive probability when $m$ is small, thus cannot solve problem II.
+
+In sum, Problem I and II are still not solved by prior arts. 
+
+%and the goal of this paper is to address them.
+
+%The formulas presented by Ken Christensen cannot solve problem I and II because the formula is too complicated to compute the optimal $k$, and the false positive cannot be computed when $m$ is large. Christensen's formula can only compute the false positve when $m$ is small. 
+%
+%Therefore, Problem I has not be solved because the deduction process of orignal BF is wrong, and the the formula presented by Ken Christensen is too complicated to compute the optimal $k$. 
+%
+%That's to say, the above problems in practice still cannot be solved by the work of Ken Christensen \etal.
+
+
+
+%文献~\cite{111}指出For a small Bloom filter (for example, of size 32 bits) the prediction of false positive rate will be in error. For larger Bloom filters the relative error decreases.
+%但这篇论文没说，到底减少到多少。
+%文献~\cite{222}给出BF的假阳性概率严格大于所给出的公式，结论是for large enough values of m with small values of k, the error is negligible.
+%这篇的论文结论是：当m比较大的时候，这个值就是理论值，误差很小，可以忽略。也就是说对于m比较大的时候，这个公式可以放心使用。
+%
+%这两篇论文给出的BF公式无法指导实际应用。
+\subsection{Proposed Solution/Our method and results}
+
+To address the Problem I, we need a formula without error that can tell us the exact value of $k$. 
+%Bloom's formula cannot answer it because the deduction process is error; while the new formulas are too complicated to deduce it.
+
+In this paper, we strictly deduce an EXACT formula of the optimal $k$ using the information and \textbf{entropy} theory: The Bloom Filter is a bit array, and its information entropy can be computed. The theory of information entropy tells us: the more chaos the array is, the larger its information entropy is. In other words, only when its information entropy is maximum, the bit array of the Bloom Filter is minimum, and the value of $k$ is optimal. We deduce the formula of $k$ when the information entropy of the Bloom Filter is maximum, and we also show that this formula is very close to the original formula when $m$ is large. 
+
+To address Problem II, we need to deduce a formula of false positive when $m$ is large. We find a left and right limit expression of the false positive, and we prove that the left and right limit is the same when $m$ is infinity. 
+In this way, we strictly prove the limit form of the true false positive, and fortunately, it is the same as the original formula.
+
+\subsection{Main Contributions}
+
+Specifically, we make the following contributions:
+
+1) Theoretical contribution: Given the value of $m$ and $n$, we deduce a exact formula of $k$ using entropy theory without error; We give the limit form of the false positive using left and right limit.
+
+2) Experimental contribution: by carrying out extensive experiments, we show the accuracy of our proposed formula. In addition, we show that the error of the original formula is so small, and is negligible when $m$ is not very small. 
+
+
+
+
+
+

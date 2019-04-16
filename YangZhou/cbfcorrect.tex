@@ -1,0 +1,62 @@
+\presec
+\newpage
+%\vspace{-0.4in}
+%\vspace{-0.07in}
+\section{Correct Rate of Counting Bloom Filters}\postsec
+\label{sec:cbfcr}
+%\vspace{-0.03in}
+The counting Bloom filter (CBF) \cite{cbf}, one widely used variant of standard Bloom filter, replaces each bit with one counter, supporting estimating the frequency of each element in a multiset. 
+Specifically, given a multiset $\mathcal{S}$ of $n$ distinct elements with their corresponding frequencies, we create a counter array $A$ of length $m$ as follows. 
+First, we initialize each counter of $A$ to 0, then for each element $x \in \mathcal{S}$, we use $k$ hash functions to compute $k$ hash values: $h_1(x), h_2(x),..., h_{k}(x)$ where each hash value is in the range $[1, m]$.
+%
+Second, for each $1 \leqslant i \leqslant k$, we let $A[h_i(x)]=A[h_i(x)] +1$.
+%
+Let $f_x$ be the frequency of element $x$ in multiset $\mathcal{S}$. 
+% and its frequency $f_x$
+Therefore, the step of $A[h_i(x)]=A[h_i(x)] +1~\text{for each}~1 \leqslant i \leqslant k$ will occur $f_x$ times. 
+%
+The resulting counter array $A$ is called the CBF for multiset $\mathcal{S}$.
+%
+To query the frequency of an element $y$ in multiset $\mathcal{S}$, we first use the same $k$ hash functions to compute $k$ hash values: $h_1(y), h_2(y),..., h_{k}(y)$.
+%
+Second, we report the minimum value of the $k$ counters: $A[h_1(x)], A[h_2(x)], ..., A[h_k(x)]$ as the estimated frequency of this element. 
+%Second, we check whether the corresponding $k$ bits in $A$ are all $1s$ (\ie, whether $A[h_1(y)] \wedge A[h_2(y)] \wedge \cdots, A[h_{k}(y)]=1$ holds); if yes, then $y \in S$ may probably hold and we can further check whether $y \in S$; if no, then $y \in S$ definitely does not hold.
+%
+Obviously, the estimated frequency reported by the CBF is always  larger than or equal to the real frequency for any element in multiset $\mathcal{S}$. 
+The case that the estimated frequency from the CBF is equal to the real frequency for one element is called the correct case. 
+The probability of such case happening is called the correct rate of the CBF ($\mathcal{C}_r$). 
+%%
+%The FP probability $f$ can be calculated from $n$, $k$, and $m$.
+
+
+The calculation of the correct rate of CBFs can benefit from our derivation of the false positive probability of standard Bloom filter.
+In querying an element $x$, the correct case happens when there exists at least one hashed counter (among $A[h_1(x)], A[h_2(x)], ..., A[h_k(x)]$) that is not hashed by any elements in multiset $\mathcal{S} \setminus \{x \cdot f_x\}$. 
+The contrapositive is that the correct case does not happen when all the $k$ hashed counters are also hashed by some elements in multiset $\mathcal{S} \setminus \{x \cdot f_x\}$. 
+%the false positive happens when the Bloom filter reports that $y \in \mathcal{S}$ (\ie, $A[h_i(x)]=1$ holds for each $1 \leqslant i \leqslant k$), but actually $x \notin \mathcal{S}$.
+Consider an arbitrary counter $A[b]$ in $A$.
+%
+For any distinct element in $\mathcal{S} \setminus \{x \cdot f_x\}$ and any hash function $h_i$ ($1 \leqslant i \leqslant k$), the probability that this element is not hashed to counter $A[b]$ by $h_i$ is $1-1/m$.
+%
+As $\mathcal{S} \setminus \{x \cdot f_x\}$ has $n-1$ distinct elements and each distinct element is hashed $k$ times, the probability that $A[b]$ is not hashed by any element in multiset $\mathcal{S} \setminus \{x \cdot f_x\}$ is $p_c$:
+%
+\begin{equation}
+p_c=\left(1-\dfrac{1}{m}\right)^{k(n-1)}
+\label{pform_c}
+\end{equation}
+%
+Thus, the probability that $A[b]$ is hashed by some elements in multiset $\mathcal{S} \setminus \{x \cdot f_x\}$ is $1-(1-1/m)^{k(n-1)}$. 
+The probability that all the $k$ hashed counters are also hashed by some elements in multiset $\mathcal{S} \setminus \{x \cdot f_x\}$ is answered by $f_{true}$ with element number of $n-1$. 
+We denote $f_{true}|_{n-1}$ as $f_{true}$ with element number of $n-1$, and get: 
+\begin{equation}
+1 - \mathcal{C}_r = f_{true}|_{n-1} \Rightarrow \mathcal{C}_r = 1 - f_{true}|_{n-1}
+\end{equation}
+Applying Eq. \ref{bounds}, we can get the upper and lower bounds of the $\mathcal{C}_r$ of CBFs: 
+\begin{equation}
+{\small
+\begin{aligned}
+\label{cbfbounds}
+1 - \left( 1- \left( 1-\dfrac{k}{m} \right)^{n-1} \right) ^k < \mathcal{C}_r < 1 - \left( 1- \left( 1-\dfrac{1}{m} \right)^{(n-1)k} \right) ^k
+\end{aligned}
+}
+\end{equation}
+

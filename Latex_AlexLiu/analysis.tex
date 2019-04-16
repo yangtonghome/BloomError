@@ -1,0 +1,125 @@
+\presec \section{Prior Art on BF False Positives} \postsec \label{sec:priorarts}
+%
+In this section, we review the prior art on calculating the false positive probability of Bloom filters.
+%
+Table \ref{table:symbols} summarizes the notations used in this paper.
+
+\begin{table} [htbp]
+\vspace{0in}
+\caption{Notations and abbreviation used in this paper}
+\centering
+\label{table:symbols}
+\begin{tabular}{| c | l |}
+\hline Symbol & Description \\
+\hline $\mathcal{S}$ & Set of elements\\
+\hline $m$  & BF size\\
+\hline $n$  & Number of elements in $\mathcal{S}$\\
+\hline $k$  & Number of hash functions \\
+\hline $k^*$  & Optimal number of hash functions \\
+\hline $f$  & False positive probability \\
+\hline $f_{bloom}$ & False positive probability calculated by Bloom \\
+\hline $f_{bose}$ & False positive probability calculated by Bose \\
+\hline $f_{christ}$ & False positive probability calculated by Christensen \\
+\hline $f_{true}$        & True false positive probability of BF\\
+\hline FP        & false positive\\
+\hline BF        & Bloom filter\\
+\hline
+\end{tabular}
+\end{table}
+
+\presub \subsection{Bloom's False Positive Formula} \postsub
+%
+In 1970, Bloom calculated the false positive probability of a Bloom filter as follows \cite{BF1970}.
+%
+Given a set $\mathcal{S}$ of elements, let $n$ be the number of elements in $\mathcal{S}$, $k$ be the number of hash functions, and $m$ be the number of bits in the Bloom filter $A$ constructed from set $\mathcal{S}$.
+%
+In querying an element $x$, the false positive happens when the Bloom filter reports that $x \in \mathcal{S}$ (\ie, $A[h_i(x)]=1$ holds for each $1 \leqslant i \leqslant k$), but actually $x \notin \mathcal{S}$.
+%
+Consider an arbitrary bit $A[b]$ in $A$.
+%
+For any element in $\mathcal{S}$ and any hash function $h_i$ ($1 \leqslant i \leqslant k$), the probability that this element is not hashed to bit $A[b]$ by $h_i$ is $1-1/m$.
+%
+As $\mathcal{S}$ has $n$ elements and each element is hashed $k$ times, the probability of $A[b]=0$ is $p'$:
+%
+\begin{equation}
+p'=\left(1-\dfrac{1}{m}\right)^{kn}
+\label{p'form}
+\end{equation}
+%
+Thus, the probability of $A[b]=1$ is $1-(1-1/m)^{kn}$.
+%
+For any element $x \notin \mathcal{S}$, the probability that the false positive happens for $x$, \ie, the probability of $A[h_1(y)] \wedge A[h_2(y)] \wedge \cdots, A[h_{k}(y)]=1$, is calculated as follows:
+%
+\begin{equation}
+\label{fBloom}
+f_{bloom} = \left(1 - \left(1 - \frac{1}{m}\right)^{kn}\right)^k
+\end{equation}
+%
+This formula can be approximated by $(1-e^{\frac{-nk}{m}})^k$, based on which we can trade off between space indicated by $m$ and time indicated by $k$.
+
+\presub
+\subsection{Bose's Derivation} \postsub
+%
+In 2008, Bose \etal pointed out that the last step in Bloom's derivation is flawed because for any element $x \notin \mathcal{S}$, which is hashed into $k$ bits $A[h_1(x)], A[h_2(x)], \cdots, A[h_k(x)]$, the $k$ events $A[h_1(x)]=1, A[h_2(x)]=1, \cdots, A[h_k(x)]=1$ are not actually independent \cite{bose2008false}.
+%
+Although for each bit $A[h_i(x)]$ ($1 \leqslant i \leqslant k$), after inserting $n$ elements into array $A$, the probability of $A[h_i(x)]=1$ is $1-(1-1/m)^{kn}$, for the probability of $A[h_1(y)] \wedge A[h_2(y)] \wedge \cdots, A[h_{k}(y)]=1$ to be $(1-(1-1/m)^{kn})^k$, the $k$ events $A[h_1(x)]=1, A[h_2(x)]=1, \cdots, A[h_k(x)]=1$ need to be independent.
+%
+We now analyze the reason that the $k$ events $A[h_1(x)]=1, A[h_2(x)]=1, \cdots, A[h_k(x)]=1$ are not independent.
+%
+Let us first consider the probability of $A[h_1(x)]=1$, which is $1-(1-1/m)^{kn}$.
+%
+Second, we consider the probability of $A[h_2(x)]=1$ based on the condition that $A[h_1(x)]=1$.
+%
+There are two possibilities for $h_2(x)$: (1) $h_2(x) \neq h_1(x)$, and (2) $h_2(x) = h_1(x)$.
+%
+For the first case, the probability of $A[h_2(x)]=1$ is $1-(1-1/(m-1))^{kn}$.
+%
+For the second case, the probability of $A[h_2(x)]=1$ is 1.
+%
+Similarly, we can analyze the $A[h_3(x)]=1$ based on the condition that $A[h_2(x)]=1$ and $A[h_1(x)]=1$, etc.
+%
+Observing the dependency of the $k$ events $A[h_1(x)]=1, A[h_2(x)]=1, \cdots, A[h_k(x)]=1$, Bose \etal derive the following false positive formula:
+
+\begin{equation}
+\label{fBose}
+f_{bose}=\dfrac{1}{m^{k(n+1)}}  \sum\limits_{i=1}^{m}i^k i! \binom{i}{m}  \left(\dfrac{1}{i!} \sum\limits_{j=0}^{i} (-1)^j \binom{i}{j}j^{kn}\right)
+\end{equation}
+
+%%
+Bose \etal derived asymptotically closed forms for the upper and lower bounds of the above formula:
+%
+\begin{equation}
+\label{fBound}
+f_{bloom} < f_{bose} \leqslant f_{bloom} \times \left(1 + \mathcal{O}\left(\frac{k}{p} \sqrt{\frac{\ln m - k\ln p}{m}}\right)\right)
+\end{equation}
+where $p = 1 - p'=1-\left(1-\dfrac{1}{m}\right)^{kn}$.
+%
+These bounds hold under the condition that
+\begin{equation}
+\label{boundCon}
+\frac{k}{p} \sqrt{\frac{\ln m - k\ln p}{m}} \leqslant c
+\end{equation}
+for some constant $c < 1$.
+%
+Bose \etal further showed that for $k \geqslant 2$, $f_{bose}$ is strictly larger than $f_{bloom}$, and the lower bound converges to $f_{bloom}$ when $m$ becomes infinitely large.
+
+%p = 1 - p'
+
+\presub
+\subsection{Christensen's Derivation} \postsub
+%
+In 2010, Christensen \etal pointed out that Bose's formula has a mistake that the term $(-1)^j$ should be $(-1)^{i-j}$, but the lower and upper bounds in Eq. \ref{fBound} are correct. 
+%
+Christensen \etal derived the finally correct false positive formula for Bloom filters as follows:
+%
+\begin{equation}
+\label{fChristen}
+f_{christ}=\dfrac{m!}{m^{k(n+1)}}\sum\limits_{i=1}^{m} \sum\limits_{j=0}^{i} (-1)^{i-j}  \dfrac{j^{kn}i^k}{(m-i)!j!(i-j)!}
+\end{equation}
+
+%%
+Although Christensen's formula is perfectly accurate, it is not much useful in practice.
+%
+First, given the Bloom filter parameters $n$, $m$, and $f$, it is difficult to calculate the optimal $k$ value as Christensen's formula does not give a closed form expression for calculating the optimal $k$.
+%
+Second, given the Bloom filter parameters $n$, $m$, and $k$, the algorithm by Christensen \etal takes $\mathcal{O}(knm)$ time to calculate the false positive probability $f$, which is time-consuming.

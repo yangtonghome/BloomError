@@ -1,0 +1,106 @@
+\documentclass[10pt, conference, letterpaper]{IEEEtran}
+\input{new-commands}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{balance}
+\usepackage[margin=0.15in]{caption}
+%\usepackage[cmex10]{amsmath}
+%\usepackage[lined, boxed, comments numbered, ruled]{algorithm2e}
+
+%% INFOCOM 2013 addition:
+\makeatletter
+\def\ps@headings{%
+\def\@oddhead{\mbox{}\scriptsize\rightmark \hfil \thepage}%
+\def\@evenhead{\scriptsize\thepage \hfil \leftmark\mbox{}}%
+\def\@oddfoot{}%
+\def\@evenfoot{}}
+\makeatother
+\pagestyle{headings}
+%% END INFOCOM 2013 addition
+
+\newcommand{\figwidth}{0.35\textwidth}
+\newcommand{\proc}{Proc. }
+\newcommand{\Proc}{Proc. }
+\newcommand{\conf}{Conf. }
+\newcommand{\Conf}{Conf. }
+\newcommand{\inte}{Int. }
+\newcommand{\Inte}{Int. }
+\newcommand{\Symp}{Symp. }
+
+\newcommand{\presec}{\vspace{0.0in}}
+\newcommand{\postsec}{\vspace{0.0in}}
+\newcommand{\presub}{\vspace{0.0in}}
+\newcommand{\postsub}{\vspace{0.0in}}
+
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
+\newcommand{\prefig}{\vspace{-0.06in}}
+\newcommand{\postfig}{\vspace{-0.06in}}
+\newcommand{\adjustfigs}{\vspace{0.1in}}
+
+\newcommand{\precaption}{\vspace{-0.06in}}
+\newcommand{\postcaption}{\vspace{-0.06in}}
+\newcommand{\preequation}{\vspace{-0in}}
+\newcommand{\postequation}{\vspace{-0in}}
+\newcommand{\prefigcaption}{\vspace{-0in}}
+\newcommand{\subfigs}{\hspace{-0in}}
+\newcommand{\subfigsvert}{\vspace{-0in}}
+\newcommand{\pretheorem}{\vspace{-0in}}
+\newcommand{\posttheorem}{\vspace{-0in}}
+
+\newcommand{\figwidthdraw}{0.4\textwidth}
+\newcommand{\figwidtheva}{0.3\textwidth}
+
+
+
+
+\graphicspath{{./FigDrawing/},{./FigEvaluation/},{./EvaluateFigures/}}
+
+	\clubpenalty=10000
+	\widowpenalty = 10000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal version idea : Alex Liu
+% 1. Extend the FP calculation to other types of Bloom filters such as counting BF.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{On the Controversy of Bloom Filter False Positives - An Information Theoretical Approach to\\Optimizing Bloom Filter Parameters}
+
+%\author{Paper \#517, \: 9 pages}
+%\Comment{
+%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3},
+%Montgomery Scott\IEEEauthorrefmark{3} and
+%Eldon Tyrell\IEEEauthorrefmark{4}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
+%Georgia Institute of Technology,
+%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212, Fax: (888) 555--1212}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+%}
+
+\begin{document}
+
+\maketitle
+
+\input{Latex_AlexLiu/abstract.tex}
+\input{Latex_AlexLiu/introduction.tex}
+
+\input{Latex_AlexLiu/analysis.tex}
+\input{Latex_AlexLiu/derivation.tex}
+\input{Latex_AlexLiu/fpbounds.tex}
+%\input{Latex_AlexLiu/evaluation.tex}
+\input{YangZhou/cbfcorrect.tex}
+\input{YangZhou/evaluation.tex}
+%\input{Qiaobin/relatedwork.tex}
+\input{Latex_AlexLiu/conclusion.tex} \balance
+ 
+\bibliographystyle{IEEEtran}
+\bibliography{reference}
+\end{document} 

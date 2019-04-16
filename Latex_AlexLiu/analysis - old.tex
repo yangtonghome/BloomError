@@ -1,0 +1,104 @@
+\presec \section{Prior Art on BF False Positives} \postsec \label{sec:priorarts}
+%
+In this section, we review prior art on calculating BF false positives.
+%
+Table \ref{table:symbols} summarizes the notations used in this paper.
+
+\begin{table} [htbp]
+\vspace{-0.15in}
+\caption{Symbols used in this paper}
+\centering
+\label{table:symbols}
+\begin{tabular}{| c | l |}
+\hline Symbol & Description \\
+\hline
+       BF   & Bloom filters \\
+\hline $\mathcal{S}$ & the set of elements in the Bloom filter \\
+		       				 %& in the Bloom filter \\
+\hline $m$  & the size of filter \\
+\hline $n$  & the number of elements \\
+\hline $k$  & the number of hash functions \\
+\hline $k^*$  & optimal number of hash functions \\
+\hline $f$  & false positive probability \\
+\hline FP   & false positive \\
+\hline $p'$ & the probability that one bit of the array is \\
+            & still 0 after inserting $n$ elements in the BF \\
+\hline $f_{bloom}$ & the FP probability formula of BF derived by Bloom \\
+\hline $f_{partitioned}$ & the FP probability formula of partitioned BF \\
+\hline $f_{true}$        & the precise FP probability formula of BF\\
+       %$Q$ & the number of actions \\
+       %$q$ & number of bits set in the Q bits \\
+\hline
+\end{tabular}
+\end{table}
+
+\presub \subsection{Bloom's False Positive Formula} \postsub
+%
+%let be...
+%Bloom cacaulet as foloows
+%发生1，不再，然后引出来。怎么计算的。。最后。。。
+%先讲怎么算的？
+%Bloom的问题在bose的问题是什么？
+
+
+The major weakness of BFs is relative to False Positive (FP) that happens when an element not belonging to the set is wrongly claimed to be. Bloom derived the classical formula of the FP probability ($f_{bloom}$) as:
+\begin{equation}
+\label{oldFormula}
+f_{bloom}= \left(1 - \left(1 - \frac{1}{m}\right)^{kn}\right)^k
+\end{equation}
+As this derivation is important, we recall how it is derived. A false positive happens in a BF when given an input element $x$ not in the set $\mathcal{S}$, after computing the $k$ hash values, all the hash positions are $1s$. We make two assumptions: 1) $kn<m$; 2) all hash functions are completely independent, {\em i.e.} \textcolor{red}{any two different hash functions map a value $x$ to two independent and random positions.}
+%each hash function maps two different values $x$ and $y$ to two independent and random positions.
+The key value to compute here is $p'$, \textit{the probability that one bit of the array is still 0 after inserting $n$ elements in the BF}. For a single hash function, the probability of hashing $x$ to a specific bit of the array is $\frac{1}{m}$. Therefore, the probability that a specific bit in the array is not set by one of the hash functions becomes $(1-\frac{1}{m})$. As each usage of a hash function is independent from the previous ones and that hash functions are used $kn$ times in order to insert $n$ elements in the BF, the probability $p'$ is derived as :
+\begin{equation}
+\label{p'form}
+p'=\left(1-\frac{1}{m}\right)^{kn}
+\end{equation}
+Now, Bloom makes in his derivation a second independence assumption: when an element $x \notin \mathcal{S}$ is presented to the BF, the probability that the application of any hash functions points to a bit of the array that is already set is independent from each other, resulting in a FP probability equal to $(1-p')^k$. Asymptotically for large BF vector size $m$, we have
+\begin{equation}
+\label{fBloom}
+f_{bloom} \rightarrow \left( 1-e^{\dfrac{-nk}{m}} \right)^k
+\end{equation}
+that is the formulation widely used for analyzing the performance of BFs in terms of FP probability.
+\subsection{Bose's Derivation}
+ In 2008, Bose et al.~\cite{bose2008false} explained that the second independence assumption needed to derive $f_{Bloom}$ is too strong and does not hold in general, resulting in an underestimation of the FP probability. More precisely, although the $k$ hash functions are independent, one cannot deduce that the event \{{\em The previous $i-1$ verified hash positions pointed to set bits} \} and the event \{{\em the $i^{\textrm{th}}$ hash position points to a set bit}\} are independent. This can be seen by observing that there are two cases for each $k$ hash functions. Or each hash function points to a bit different from other hash functions, and in this case the independence assumption holds, or two or more hashes point to the same bit in the BF array and the independence assumption does not hold any more. This is the second case that was missed by Bloom in its derivation. Bose \textit{et al.} derived a new formula claimed to be exact that was based on balls-and-urns model:
+\begin{equation}
+\label{fBose}
+f_{bose}=\dfrac{1}{m^{k(n+1)}}  \sum\limits_{i=1}^{m}i^k i! \binom{i}{m}  \left(\dfrac{1}{i!} \sum\limits_{j=0}^{i} (-1)^j \binom{i}{j}j^{kn}\right)
+\end{equation}
+Moreover, Bose \textit{et al.} derived asymptotic closed form upper and lower bounds for their formula as:
+\begin{equation}
+\label{fBound}
+f_{bloom} < f_{bose} \leqslant f_{bloom} \times \left(1 + \mathcal{O}\left(\frac{k}{p} \sqrt{\frac{\ln m - k\ln p}{m}}\right)\right)
+\end{equation}
+These bounds hold under the condition that
+\begin{equation}
+\label{boundCon}
+\frac{k}{p} \sqrt{\frac{\ln m - k\ln p}{m}} \leqslant c
+\end{equation}
+for some constant $c < 1$. As stated in \cite{bose2008false}, for $k \geqslant  2$, $f_{bose}$ is strictly larger than $f_{Bloom}$, and the upper and lower bound converges to $f_{bloom}$, meaning that for small BFs (for example, of size 32 bits)  $f_{bloom}$ formula underestimates FP probability and for larger BFs the relative error decreases.
+\subsection{Christensen's Derivation}
+Later, Christensen \textit{et al.} ~\cite{ken2010false} claimed that both Bloom's and Bose's formulae for FP probability are imprecise. The authors used a balls-and-bins model to derive a recursive expression for the probability of $P(N,M,K)$ of $K$ bins being occupied in an $M$ bins and $N$ balls model:
+\begin{equation}
+\label{recursiveExp}
+\begin{aligned}
+P(N,M,K) = & P(N-1,M,K)\frac{K}{M} \\
+& +P(N-1,M,K-1)\frac{M-K+1}{M}
+\end{aligned}
+\end{equation}
+This relates to BF's FP probability where $K$ is the number of hash functions, $M$ is the size of the BF and $N=k*n$. %Therefore, the total probability is that
+%\begin{equation}
+%\label{fChristenSim}
+%f_{Christ} = \sum\limits_{i=1}^{m} \left(P(k*n, m,i)(\frac{i}{m})^k\right)
+%\end{equation}
+By solving the above recursive equation~\ref{recursiveExp}, Christensen derived a correct formula for FP probability as
+\begin{equation}
+\label{fChristen}
+f_{christ}=\dfrac{m!}{m^{k(n+1)}}\sum\limits_{i=1}^{m} \sum\limits_{j=0}^{i} (-1)^{i-j}  \dfrac{j^{kn}i^k}{(m-i)!j!(i-j)!}
+\end{equation}
+In order to compute efficiently $f_{christ}$ for large $m$, $n$ and $k$, the authors of ~\cite{ken2010false} proposed an iterative table-based algorithm that can be calculated in $\mathcal{O}(knm)$. Christensen \textit{et al.} also showed that for large enough values of $m$ and small values of $k$, the error of $f_{bloom}$ becomes very small.
+
+%The two papers \cite{bose2008false} \cite{ken2010false} make better evaluation of the FP probability,
+The obtained novel closed form formulas in \cite{bose2008false} and \cite{ken2010false} are too complex to be used in practice, in particular to derive the optimal number of hash functions $k^*$,
+which is needed to achieve a given level of FP probability that is needed for a large number of practical cases.
+%As the Christensen's formula is the precise formula for deriving the FP probability, we will call this formula $f_{true}$ in the forthcoming.
+In the next section, we will derive this optimal value $k^*$ through information entropy theory.

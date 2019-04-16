@@ -1,0 +1,33 @@
+\begin{abstract}
+Although Bloom Filters (BF) have been widely used in many applications, the fundamental issue of how to calculate the false positive probability remains elusive.
+%
+%Properly calculating the false positive probability of BF is critical because it has been used to calculate the optimal value of the important parameter $k$, which is the number of hash functions.
+%
+Since Bloom gave the false positive probability formula in 1970, in 2008, Bose \textit{et al.} pointed out that Bloom's formula for calculating the false positive probability is flawed and gave a new false positive probability formula; and in 2010, Christensen \textit{et al.} further pointed out that Bose's formula is also flawed and gave another new false positive probability formula.
+%
+Although Christensen's formula is perfectly accurate, it is too complicated to calculate the optimal value of $k$.
+%
+While the conventional wisdom is to derive the optimal value of $k$ from the formula of false positive probability, in this paper, we propose the first approach to calculating the optimal $k$ without any formula of false positive probability.
+%
+%The basis of our approach is our following observation based on information entropy theory: for given $n$ elements and $k$ hash functions, the Bloom filter size $m$ is the smallest if and only if the Bloom filter's entropy is the largest.
+%The basis of our approach is our derived theorem: given any BF with $m$ bits and $n$ elements, if its information entropy is at the maximum, its false positive probability is at the minimum.
+%
+%Furthermore, we propose another method to calculate the false positive probability.
+%%
+%Interestingly, our derived formula of false positive probability is the same as Bloom's.
+Furthermore, we propose an upper bound for the false positive probability by using the theory of entropy, where our upper bound is much more accurate than that proposed by Bose in 2008. 
+Our upper bound is so accurate that it becomes equal to the lower bound (the lower bound is the formula of false positive probability proposed by Bloom) when the size of Bloom filter becomes infinitely large.
+%
+%This deepens our understanding of Bloom's formula of false positive probability: it is perfectly accurate when $m$ is infinitely large, and it is practically accurate when $m$ is sufficiently large.
+%
+We conducted extensive experiments to validate our findings.
+%
+In particular, we show that the error of Bloom's formula of false positive probability is negligibly small when $m$ is large.
+%
+We release our source code of Bloom Filters in \cite{opensource} without any identity information.
+\end{abstract}
+
+%\vspace{0.15in}
+%\begin{IEEEkeywords}
+%Bloom Filter, False Positive Probability, Information Entropy
+%\end{IEEEkeywords} 

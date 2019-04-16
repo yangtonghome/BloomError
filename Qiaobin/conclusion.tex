@@ -1,0 +1,10 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this paper, we discuss the controversy of the formula of Bloom Filter. Three formulas of false positive probability are deduced: Bloom's formula, Bose's formula, and Christensen's formula. There is an error in the deduction process of Bloom's formula, and a minor error in Bose's formula. Christensen's formula is correct, and can compute the false positive using an iterative table-based algorithm in $O(knm)$. However, it cannot deduce the optimal value of $k$.
+%Christensen's formula is correct, but can only compute the false positive when $m$ is small, it cannot deduce the optimal value of $k$.
+
+
+To compute the optimal value of $k$, we use information and entropy theory to deduce the exact formula of $k$.
+To compute the false positive probability, 1) For small $m$, Christensen's formula can be used; 2) For large $m$, we prove a limit form of false positive probability using left and right limit, and find out that it is same as Bloom's. 
+3) We also show that the error is negligible when $m$ is not large using two simple examples.

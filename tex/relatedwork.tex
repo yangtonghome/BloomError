@@ -1,0 +1,58 @@
+\section{Related Work}
+\subsection{Paper Bloom}
+The negative effect of Bloom Filters is the false positive: some elements not belonging to the set might be judged to be. Bloom gives the formula of the probability of false positive as follows:
+
+\begin{equation}
+\label{fBloom}
+f_{Bloom}=\left( 1-e^{\dfrac{-nk}{m}} \right)^k
+\end{equation}
+
+Where $m$ is the size of a Bloom Filter, $n$ is the number of elements, $k$ is the number of hash functions, $f_{Bloom}$ is the probability of false positive.
+
+\subsection{Paper I}
+Formula~\ref{fBloom} appears in many papers related to Bloom Filters. In 2008, Prosenjit Bose et al.~\cite{bose2008false} first claimed that this Formula~\ref{fBloom} is incorrect, and deduced a new exact formula as follows:
+
+
+\begin{equation}
+\label{fBose}
+f_{bose}=\dfrac{1}{m^{k(n+1)}}  \sum\limits_{i=1}^{m}i^k i!C_m^i  \left(\dfrac{1}{i!} \sum\limits_{j=0}^{i} (-1)^j C_i^j j^{kn}\right)
+\end{equation}
+
+Prosenjit Bose also claimed that ``for small Bloom filters (for example, of size 32 bits) the prediction of false positive rate will be in error; for larger Bloom filters the relative error decreases''. They also pointed out that when $k \geq  2$, $f_{bose}$ is strictly larger than $f_{Bloom}$.
+
+
+\subsection{Paper II}
+Ken Christensen \textit{et al.} ~\cite{ken2010false} claimed that the formulas of both $f_{Bloom}$ and $f_{bose}$ are wrong, and deduced a new formula as follows:
+
+\begin{equation}
+\label{fChristen}
+f_{Christ}=\dfrac{m!}{m^{k(n+1)}}\sum\limits_{i=1}^{m} \sum\limits_{j=0}^{i} (-1)^{i-j}  \dfrac{j^{kn}i^k}{(m-i)!j!(i-j)!}
+\end{equation}
+
+
+Ken Christensen et al. also claimed that ``for large enough values of $m$ with small values of $k$, the error is negligible". 
+
+In sum, these two papers point out the original formula of false positive is wrong and larger than the true value, and present the new formulas, which are too complicated to compute the optimal $k$. 
+
+It is a good contribution that these two papers point out the original formula of the Bloom Filter has error. However, the new proposed two formulas are too complicated to be useful in practice. For example, given the value of $m, n$, the optimal $k$ needs to be determined, this cannot be achieved due to the extremely complicated formulas for these two new formulas. 
+
+\subsection{Other Related Work}
+
+Bloom Filters is applied into many fields, and its applications can be divided into the following four categories:
+
+1) cache judgment.
+2) IP lookups.
+3) MAC address lookup.
+4) packet classification.
+
+There is also an another classification method:
+1) single Bloom Filter application.
+2) multiple Bloom Filters application.
+
+counting Bloom filters add the ability to support deletion of BF [13].
+retouched Bloom filters make a trade off between false positives and false negatives [10]
+compressed Bloom filters optimize the space when transmitted. [20]
+Bloomier filters[]
+Spectral BF \cite{spectralBF}
+
+Although so many variants of Bloom Filters are proposed, but the standard BF continues to be most popular in a great number of applications owing to its simplicity and outstanding performance. 

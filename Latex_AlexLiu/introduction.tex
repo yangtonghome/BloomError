@@ -1,0 +1,102 @@
+\vspace{0.08in}
+\presec \section{Introduction} \postsec
+\vspace{0.06in}
+\subsection{Motivation} \postsub
+\vspace{0.06in}
+%
+A Bloom Filter (BF) is a compact data structure used for quickly checking whether an element belongs to a set or not \cite{BF1970}.
+%
+Given a set $S$ of $n$ elements, we create a bit array $A$ of length $m$ as follows.
+%
+First, we initialize each bit of $A$ to 0, then for each element $x \in \mathcal{S}$, we use $k$ hash functions to compute $k$ hash values: $h_1(x), h_2(x),..., h_{k}(x)$ where each hash value is in the range $[1, m]$.
+%
+Second, for each $1 \leqslant i \leqslant k$, we let $A[h_i(x)]=1$.
+%
+The resulting bit array $A$ is called the BF for set $S$.
+%
+To query whether $y \in S$, we first use the same $k$ hash functions to compute $k$ hash values: $h_1(y), h_2(y),..., h_{k}(y)$.
+%
+Second, we check whether the corresponding $k$ bits in $A$ are all $1s$ (\ie, whether $A[h_1(y)] \wedge A[h_2(y)] \wedge \cdots, A[h_{k}(y)]=1$ holds); if yes, then $y \in S$ may probably hold and we can further check whether $y \in S$; if no, then $y \in S$ definitely does not hold.
+%
+The cases that the BF shows that $y \in S$ may hold but actually $y \notin S$ are called false positives (FP).
+%
+The FP probability $f$ can be calculated from $n$, $k$, and $m$.
+%
+Thus, given a set of $n$ elements and the required FP probability $f$, we can calculate the relationship between $k$ and $m$.
+%
+Based on the calculated relationship between $k$ and $m$, we can properly trade off between space and speed: smaller $m$ means smaller space, and smaller $k$ means the smaller number of hash function calculations.
+%
+In typical BF applications, as $m$ is determined by the memory budget for the BF, with known values of $n$ and $f$, we calculate the optimal value for the only unknown parameter $k$.
+
+%%
+As set membership query is a fundamental operation in many networking applications, and BFs have the advantages of small memory consumption, fast query speed, and no false negatives, BFs have been widely used in a wide variety of networking applications, such as web caching \cite{webcaching, compressedBFpatent}, IP lookup \cite{sig03PBF, BF_TC, songsig05, HASH-100G}, packet classification \cite{Info04ACPC, Info08memoryPC}, regular expression matching \cite{HPI03deep, HardwareREM}, multicast \cite{BloomCast, Sig02Multicast}, content distribution networks \cite{CDNwww, Sig02informed}, routing \cite{sourceroutingBF, wolfBF}, P2P networks \cite{IAWP2P, P2Psearching}, overlay networks \cite{OverlayMBF, JSAC04Overlay}, name based networks \cite{ BFWY, BFwirelessNDN}, queue management \cite{Info01SFB, Sig06bBF}, Internet measurement \cite{Sig02new, JSAC06measument}, IP traceback \cite{Sig01IPTrace, ICC04scalable}, sensor networks \cite{IPSN07minisec, JSAC05SN}, data center networks \cite{yuConext09, BFDanLi, Info11DCN}, cloud computing \cite{CloudCom11ATree, Cloudcomputingplatform}, cellular networks \cite{PerCom05MANET, WE07securehoc}, and more \cite{shbf, omass}.
+%
+Most applications with set membership query can potentially be optimized using BFs.
+
+%%
+Although BFs have been widely used in many applications, the fundamental issue of how to calculate FP probability remains elusive.
+%
+Properly calculating the FP probability of BF is critical because it is used to calculate the optimal value of the important parameter $k$, the number of hash functions.
+%
+In \cite{BF1970}, Bloom gave a formula for calculating the FP probability with known parameters $n$, $k$, and $m$.
+%
+Based on Bloom's formula, we can also easily compute the optimal value of the parameter $k$ when $m$ and $n$ are known.
+%
+This formula has been believed to be correct until 2008 when Prosenjit Bose \textit{et al.} pointed out that Bloom's formula is flawed and gave a new FP formula \cite{bose2008false}.
+%
+Interestingly, two years later, Ken Christensen \textit{et al.} pointed out that Bose's formula is also flawed and gave a new FP formula \cite{ken2010false}.
+%
+So far, it is believed that Christensen's formula is perfectly accurate.
+%
+However, Both Bose's and Christensen's FP formulas are too complicated to calculate the optimal value of $k$ from given values of $n$ and $m$.
+
+\presub
+\subsection{Main Contributions}\postsub
+%%
+While the conventional wisdom is to derive the optimal value of BF parameter $k$ from the FP probability, in this paper, we propose the first approach to calculating the optimal $k$ without any FP formula.
+%
+We first observe that for a BF with $m$ bits and $n$ elements, if and only if its entropy is the largest, its false positive probability is the smallest, according to information entropy theory.
+%
+Based on this observation, our approach is to derive a formula for calculating the optimal $k$ by letting the entropy equal to 1.
+%
+We also propose another method to calculate FP probability by deriving the left and right limit expressions of FP probability.
+%
+We prove that when $m$ goes to infinity, the left and right limits are the same, which is essentially the FP probability.
+%
+Interestingly, our derived FP formula is the same as Bloom's formula in \cite{BF1970}.
+%
+This deepens our understanding of Bloom's formula: it is perfectly accurate when $m$ is infinitely large, and it is practically accurate when $m$ is sufficiently large.
+
+%%
+In summary, we make three key contributions in this paper.
+%
+First, we propose an information theoretical approach to calculating the optimal value of BF parameter $k$ without calculating FP probability.
+%
+Second, we propose a new upper bound which is much more accurate than state-of-the-art.
+%
+When $m$ is infinitely large, our upper bound becomes the same as the lower bound.
+%
+This result formally proves that Bloom's formula is practically accurate when $m$ is sufficiently large.
+%
+Third, we conducted experiments to validate our findings.
+%
+In particular, we show that the error of Bloom's formula is negligibly small when $m$ is large.
+%
+Furthermore, we release our source code of Bloom Filters in \cite{opensource} without any identity information.
+
+%
+The rest of this paper proceeds as follows.
+%
+In Section \ref{sec:priorarts}, we introduce the controversy on FP probability.
+%
+In Section \ref{sec:optimalk}, we show the derivation of the optimal number of hash functions using the information entropy theory.
+%
+In Section \ref{sec:limitf}, we present a new upper bound of the false positive probability of Bloom Filters.
+%
+In Section \ref{sec:cbfcr}, we derive the bounds of correct rate of counting Bloom filters through our proposed formulas about Bloom Filters. 
+%
+In Section \ref{sec:evaluation}, we conduct experiments to evaluate the error of Bloom Filters.
+%
+%In Section \ref{sec:related}, we discuss related work.
+%
+We conclude the paper in Section \ref{sec:conclusion}.
